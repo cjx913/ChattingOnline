@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/chattingonline</property>
+        <mapping class="com.cjx913.chattingonline.entity.Friend"/>
+        <mapping class="com.cjx913.chattingonline.entity.Group"/>
+        <mapping class="com.cjx913.chattingonline.entity.Message"/>
+        <mapping class="com.cjx913.chattingonline.entity.Password"/>
+        <mapping class="com.cjx913.chattingonline.entity.User"/>
+        <mapping class="com.cjx913.chattingonline.entity.UserInformation"/>
+        <mapping class="com.cjx913.chattingonline.utils.Friend"/>
+        <mapping class="com.cjx913.chattingonline.utils.Message"/>
+        <mapping class="com.cjx913.chattingonline.entity.Group"/>
+
+
+    </session-factory>
+</hibernate-configuration>

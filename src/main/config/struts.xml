@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <!-- 常量 -->
+    <constant name="struts.devMode" value="true"/><!--开发模式-->
+    <constant name="struts.ui.theme" value="simple"/><!--主题-->
+    <constant name="struts.i18n.encoding" value="UTF-8"/><!--统一编码-->
+    <constant name="struts.action.extension" value=",action,html"/><!--く请求url后缀,不写后缀、.action、.html结尾都可以-->
+    <constant name="struts.objectFactory" value="spring" /><!--创建Action实例的过程由spring处理-->
+    <constant name="struts.convention.result.path" value="/WEB-INF/pages/"/>
+    <constant name="struts.action.excludePattern" value="/static/.*?,/websocket" /><!--静态资源文件,websocket-->
+    <constant name="struts.serve.static.browserCache" value="false" /><!--是否缓存静态资源-->
+
+    <!-- 公用package -->
+    <package name="myDefaultPackage" namespace="/" extends="json-default">
+        <!--配置拦截器 -->
+        <interceptors>
+            <!-- 注册拦截器 -->
+            <interceptor name="fieldValidation" class="com.cjx913.chattingonline.Interceptor.FieldValidationInterceptor"/>
+            <interceptor name="loginInterceptor" class="com.cjx913.chattingonline.Interceptor.LoginInterceptor" />
+            <!-- 引用已经注册了拦截器，形成自定义拦截器栈
+                * 注意：自定义拦截器栈，将覆盖到默认栈 ，必须手动再自定义拦截器栈中 引用默认栈
+            -->
+            <interceptor-stack name="myDafaultStack">
+                <!-- 引用默认 -->
+                <interceptor-ref name="defaultStack"></interceptor-ref>
+                <!-- 引用自定义拦截器-->
+                <interceptor-ref name="loginInterceptor"></interceptor-ref>
+                <interceptor-ref name="fieldValidation"></interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        <!-- 修改当前<package>默认栈，此时 package下的所有的action都将使用此栈 -->
+        <default-interceptor-ref name="myDafaultStack"></default-interceptor-ref>
+
+        <!-- 全局结果集 -->
+        <global-results>
+            <!-- 没有登录 -->
+            <result name="nonLogin">/WEB-INF/pages/login.jsp</result>
+            <!--返回首頁-->
+            <result name="index">/index.jsp</result>
+        </global-results>
+    </package>
+
+    <include file="struts-default.xml"/>
+
+</struts>
