@@ -364,44 +364,11 @@
                 //获取接收的消息json字符串，转化为json对象
                 var messageJsonString = ev.data;
                 //消息添加消息框
+                //messageJsonObject消息的json对象
                 var messageJsonObject = JSON.parse(messageJsonString);
                 appendMessageToMessageList(messageJsonObject);
                 //保存消息到本地
                 saveMessage(getMessageArrayItemKey(messageJsonObject.fromId,messageJsonObject.toId),messageJsonString);
-               /* //是自己发送的
-                if (messageJsonObject.fromId == userId) {
-                    $(friendDivId).find("span label").text("");
-                    //消息添加到消息框中
-                    $("#message_list").append(
-                        "<div class='message_item'>" +
-                        "<p class='selfMessage'>" +
-                        messageJsonObject.content + "<br/>" + messageJsonObject.sendTime +
-                        "</p>" +
-                        "</div>");
-                } else {//如果不是自己发送
-                    var friendDivId = "#friend_" + jsonData.fromId;
-
-                    if (messageJsonObject.fromId == toId) {//同一聊天状态
-                        $(friendDivId).find("span label").text("");
-                        $("#message_list").append(
-                            "<div class='message_item'>" +
-                            "<p class='othersMessage'>" +
-                            messageJsonObject.content + "<br/>" + messageJsonObject.sendtime +
-                            "</p>" +
-                            "</div>");
-                    } else {//不同一聊天状态
-                        //判断信息数量，实现自增
-                        var t = $(friendDivId).find("span label").text();
-                        alert(t);
-                        if (t == "") {
-                            $(friendDivId).find("span label").text(1);
-                        } else {
-                            $(friendDivId).find("span label").text(parseInt(t) + 1);
-                        }
-                    }
-                }*/
-
-
             }
         }
 

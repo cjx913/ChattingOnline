@@ -44,6 +44,7 @@ function getMessageJsonArray(key) {
 }
 
 //获取MessageArrayItemKey
+//根据两个id提供固定的key
 function getMessageArrayItemKey(id1, id2) {
     if (parseInt(id1) < parseInt(id2)) {
         return String(id1) + String(id2);
