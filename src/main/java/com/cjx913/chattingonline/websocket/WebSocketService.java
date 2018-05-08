@@ -103,7 +103,7 @@ public class WebSocketService extends BaseServiceImpl {
         //发送信息
         sendMessage(messageJsonObject);
         //同样把消息返回
-        return message;
+        return messageJsonObject.toJSONStringWithDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
     /**

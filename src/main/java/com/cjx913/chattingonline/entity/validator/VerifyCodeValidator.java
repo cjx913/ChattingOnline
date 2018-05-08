@@ -25,7 +25,7 @@ public class VerifyCodeValidator implements ConstraintValidator<VerifyCode,Objec
             String verifyCodeValue = BeanUtils.getProperty(value,verifyCode);
             String canvasVerifyCodeValue = BeanUtils.getProperty(value,canvasVerifyCode);
 //            如果要验证的两个值都为null，
-            boolean valid=(verifyCodeValue==null)&&(canvasVerifyCodeValue==null);
+            boolean valid=(verifyCodeValue==null||verifyCodeValue=="")&&(canvasVerifyCodeValue==null||canvasVerifyCodeValue=="");
             if(valid){
                 return true;
             }

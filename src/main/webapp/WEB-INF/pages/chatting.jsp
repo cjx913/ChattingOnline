@@ -239,15 +239,17 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/websocket.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/chatting.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/webstorage.js"></script>
     <script type="text/javascript">
         var userId;
         var toId;
         var toGroupId;
         var message;
         var ws;
-        var url = "ws://localhost:8088/ChattingOnline/websocket";
+        var url = "ws://localhost:8088"+"${pageContext.request.contextPath}"+"/websocket";
         //页面加载时(在 DOM 结构绘制完成后)执行
         $(function () {
+            //创建websocket连接
             ws = getWebsocket(url);
 
             //好友列表事件
@@ -262,7 +264,7 @@
 
         //页面完全加载时执行
         window.onload = function (ev) {
-
+            userId = $("#userId").val();
 
         }
 
@@ -293,14 +295,23 @@
                     //清空信息数
                     var friendDivId = "#friend_" + toId;
                     $(friendDivId).find("span label").text("");
+                    //清空消息框
+                    $("#message_list").empty();
+                    //加载好友消息
+                    var messageJsonArray = getMessageJsonArray(getMessageArrayItemKey(userId,toId));
+                    //历遍messageJsonArray
+                    for(var i=0;i<messageJsonArray.length;i++){
+                        //添加到消息框
+                        appendMessageToMessageList(messageJsonArray[i]);
+                    }
                 });
             });
         }
 
-        //好友列表事件
+        //群组列表事件
         function groupListEvent() {
             $("#groupChat .item").each(function () {
-                //好友列表点击事件
+                //群组列表点击事件
                 $(this).click(function () {
                     //切回聊天界面
                     $("#welcome_interface").css("display", "none")
@@ -309,7 +320,9 @@
                     $("#title_area div").text($(this).find("span strong").text());
                     //设置toGroupId
                     $("#toGroupId").val($(this).find("input").val());
+                    toGroupId = $(this).find("input").val();
                     //设置toId的值null
+                    $("#toId").val(null);
                     $("#toId").val(null);
                 });
             });
@@ -348,30 +361,36 @@
         //接受消息事件
         function receiveMessageEvent() {
             ws.onmessage = function (ev) {
-                var jsonData = JSON.parse(ev.data);
-                var sendtime = jsonData.sendTime;
-                var content = jsonData.content;
-                if (jsonData.fromId == userId) {
+                //获取接收的消息json字符串，转化为json对象
+                var messageJsonString = ev.data;
+                //消息添加消息框
+                var messageJsonObject = JSON.parse(messageJsonString);
+                appendMessageToMessageList(messageJsonObject);
+                //保存消息到本地
+                saveMessage(getMessageArrayItemKey(messageJsonObject.fromId,messageJsonObject.toId),messageJsonString);
+               /* //是自己发送的
+                if (messageJsonObject.fromId == userId) {
                     $(friendDivId).find("span label").text("");
+                    //消息添加到消息框中
                     $("#message_list").append(
                         "<div class='message_item'>" +
                         "<p class='selfMessage'>" +
-                        content + "<br/>" + sendtime +
+                        messageJsonObject.content + "<br/>" + messageJsonObject.sendTime +
                         "</p>" +
                         "</div>");
-                } else {
+                } else {//如果不是自己发送
                     var friendDivId = "#friend_" + jsonData.fromId;
 
-                    if (jsonData.fromId == toId) {//同一聊天状态
+                    if (messageJsonObject.fromId == toId) {//同一聊天状态
                         $(friendDivId).find("span label").text("");
                         $("#message_list").append(
                             "<div class='message_item'>" +
                             "<p class='othersMessage'>" +
-                            content + "<br/>" + sendtime +
+                            messageJsonObject.content + "<br/>" + messageJsonObject.sendtime +
                             "</p>" +
                             "</div>");
                     } else {//不同一聊天状态
-                        //判断信息数量
+                        //判断信息数量，实现自增
                         var t = $(friendDivId).find("span label").text();
                         alert(t);
                         if (t == "") {
@@ -379,6 +398,46 @@
                         } else {
                             $(friendDivId).find("span label").text(parseInt(t) + 1);
                         }
+                    }
+                }*/
+
+
+            }
+        }
+
+        /**
+         * 添加消息到消息框
+         * @param messageJsonObject  消息的josn对象
+         */
+        function appendMessageToMessageList(messageJsonObject) {
+            //是自己发送的
+            if (messageJsonObject.fromId == $("#userId").val()) {
+                $(friendDivId).find("span label").text("");
+                //消息添加到消息框中
+                $("#message_list").append(
+                    "<div class='message_item'>" +
+                    "<p class='selfMessage'>" +
+                    messageJsonObject.content + "<br/>" + messageJsonObject.sendTime +
+                    "</p>" +
+                    "</div>");
+            } else {//如果不是自己发送
+                var friendDivId = "#friend_" + messageJsonObject.fromId;
+
+                if (messageJsonObject.fromId == $("#toId").val()) {//同一聊天状态
+                    $(friendDivId).find("span label").text("");
+                    $("#message_list").append(
+                        "<div class='message_item'>" +
+                        "<p class='othersMessage'>" +
+                        messageJsonObject.content + "<br/>" + messageJsonObject.sendTime +
+                        "</p>" +
+                        "</div>");
+                } else {//不同一聊天状态
+                    //判断信息数量，实现自增
+                    var t = $(friendDivId).find("span label").text();
+                    if (t == "") {
+                        $(friendDivId).find("span label").text(1);
+                    } else {
+                        $(friendDivId).find("span label").text(parseInt(t) + 1);
                     }
                 }
             }

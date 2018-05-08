@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public class ObjectReplace {
 
+
     public static final <T extends Object> T replacePropertyExceptNull(T original, T replace) throws IntrospectionException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Class clazz = replace.getClass();//获得实体类名
         /*如果original爲空，创建original*/
