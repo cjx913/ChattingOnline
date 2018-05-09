@@ -37,7 +37,6 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
     }
 
 
-
     @Action(value = "/toRegister",
             results = {@Result(name = "success", location = "register.jsp")})
     public String toRegister() {
@@ -51,7 +50,7 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
         try {
             User user = getUserService().saveOrUpdateUser(umd.getName());
             Password p = getUserService().saveOrUpdatePassword(user.getId(), umd.getPassword());
-            ActionContext.getContext().getSession().put("userId",user.getId());
+            ActionContext.getContext().getSession().put("userId", user.getId());
             ActionContext.getContext().getSession().put("user", user);
             return SUCCESS;
         } catch (Exception e) {
@@ -72,20 +71,17 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
     public String login() {
         User user = getUserService().findUserByAccountAndPassword(umd.getAccount(), umd.getPassword());
         if (user == null) {
-            ActionContext.getContext().put("loginError","用户名或密码错误");
+            ActionContext.getContext().put("loginError", "用户名或密码错误");
             return ERROR;
         }
-        ActionContext.getContext().getSession().put("userId",user.getId());
+        ActionContext.getContext().getSession().put("userId", user.getId());
         ActionContext.getContext().getSession().put("user", user);
-        ActionContext.getContext().getSession().put("information", user.getUserInformation());
-        ActionContext.getContext().getSession().put("friends",user.getFriends());
-        ActionContext.getContext().getSession().put("groups",user.getGroups());
         return SUCCESS;
     }
 
     @Action(value = "/logout",
-            results = {@Result(name = "success", location = "toLogin",type = "redirectAction")})
-    public String logout(){
+            results = {@Result(name = "success", location = "toLogin", type = "redirectAction")})
+    public String logout() {
         ActionContext.getContext().getSession().remove("user");
         return SUCCESS;
     }
@@ -99,7 +95,7 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
     @Action(value = "/eidtInformation",
             results = {@Result(name = "success", location = "chatting.jsp"),
                     @Result(name = "input", location = "editInformation.jsp")})
-    public String eidtInformation(){
+    public String eidtInformation() {
         return saveInformation();
     }
 
@@ -118,6 +114,8 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
                     umd.getId(), umd.getGender(), umd.getAge(),
                     umd.getBirth(), umd.getAddress(), umd.getHeadPortrait(),
                     umd.getEmail(), umd.getPhone());
+            User user = getUserService().findUserById(umd.getId());
+            ActionContext.getContext().getSession().put("user", user);
             return SUCCESS;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -133,7 +131,7 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
 
     @Action(value = "/toEditPassword",
             results = {@Result(name = "success", location = "paw.jsp")})
-    public String toEditPassword(){
+    public String toEditPassword() {
         return SUCCESS;
     }
 
@@ -141,22 +139,49 @@ public class UserAction extends BaseAction implements ModelDriven <UserModelDriv
             results = {@Result(name = "success", location = "chatting.jsp"),
                     @Result(name = "input", location = "paw.jsp"),
                     @Result(name = "error", location = "paw.jsp")})
-    public String editPassword(){
+    public String editPassword() {
         //验证两次密码输入是否一致
-        if(!umd.getPassword().equals(umd.getAgainPassword())){
-            Map<String,String> fieldError = new HashMap <>();
-            fieldError.put("againPassword","两次输入密码不一致");
-            ActionContext.getContext().put("fieldError",fieldError);
+        if (!umd.getPassword().equals(umd.getAgainPassword())) {
+            Map <String, String> fieldError = new HashMap <>();
+            fieldError.put("againPassword", "两次输入密码不一致");
+            ActionContext.getContext().put("fieldError", fieldError);
             return ERROR;
         }
         //验证密码是否正确
-        if(!getUserService().existsPasswordByUserIdAndPassword(umd.getId(),umd.getOriginalPassword())){
-            Map<String,String> fieldError = new HashMap <>();
-            fieldError.put("password","密码不正确");
+        if (!getUserService().existsPasswordByUserIdAndPassword(umd.getId(), umd.getOriginalPassword())) {
+            Map <String, String> fieldError = new HashMap <>();
+            fieldError.put("password", "密码不正确");
             return ERROR;
         }
         //更改密码
-        getUserService().saveOrUpdatePassword(umd.getId(),umd.getPassword());
+        getUserService().saveOrUpdatePassword(umd.getId(), umd.getPassword());
+        return SUCCESS;
+    }
+
+    @Action(value = "/toAddFriend",
+            results = {@Result(name = "success", location = "addFriend.jsp")})
+    public String toAddFriend() {
+        return SUCCESS;
+    }
+
+    @Action(value = "/searchFriend",
+            results = {@Result(name = "success", location = "addFriend.jsp"),
+                    @Result(name = "input", location = "addFriend.jsp")})
+    public String searchFriend() {
+        User friend = getUserService().findUserByAccount(umd.getAccount());
+        if (friend != null) {
+            ActionContext.getContext().put("friend", friend);
+        }
+        return SUCCESS;
+    }
+
+    @Action(value = "/addFriend",
+            results = {@Result(name = "success", location = "chatting.jsp"),
+                    @Result(name = "input", location = "addFriend.jsp")})
+    public String addFriend() {
+        getUserService().addFriend(umd.getId(), umd.getAccount());
+        User user = getUserService().findUserById(umd.getId());
+        ActionContext.getContext().getSession().put("user", user);
         return SUCCESS;
     }
 }

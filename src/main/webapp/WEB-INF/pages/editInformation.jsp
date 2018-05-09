@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: cjx913
@@ -32,13 +33,15 @@
 <div style="font-size: 40px;text-align: center">您登陆的账号：<strong style="color: red">${user.account}</strong>
 </div>
 <div>
+
     <form id="information" action="${pageContext.request.contextPath}/user/eidtInformation" method="post">
+        <c:set value="${user.userInformation}" var="information"></c:set>
         <h2 style="text-align: center">请您完善您的信息</h2>
         <input type="hidden" name="id" value="${user.id}"/>
         <div>
             <label class="fieldError">${fieldError.gender}<br/></label>
             <label>性　别：<input type="radio" name="gender" value="男"/>男
-                <input type="radio" name="gender" value="女"/></label>女
+                <input type="radio" name="gender" value="女"/>女</label>
         </div>
         <div>
             <label class="fieldError">${fieldError.age}<br/></label>
@@ -67,6 +70,7 @@
         </div>
         <br/>
     </form>
+
 </div>
 </body>
 </html>

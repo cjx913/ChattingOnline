@@ -31,6 +31,7 @@ public class UserModelDriven {
     private String email;
     @Pattern(message = "{UserModelDriven.phone.Pattern}",regexp = "|\\d{11}")
     private String phone;
+    private Integer friendId;
 //    @Min(message = "{UserModelDriven.year.Min}",value=1900)
 //    @Max(message = "{UserModelDriven.year.Max}",value=2018)
 //    private Integer year;
@@ -188,6 +189,11 @@ public class UserModelDriven {
         this.canvasVerifyCode = canvasVerifyCode;
     }
 
+    public Integer getFriendId() {
+        return friendId;
+    }
 
-
+    public void setFriendId(Integer friendId) {
+        this.friendId = friendId;
+    }
 }

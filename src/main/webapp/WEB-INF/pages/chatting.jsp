@@ -186,7 +186,7 @@
 
         }
 
-        .message_item{
+        .message_item {
             float: left;
             width: 660px;
             position: relative;
@@ -246,7 +246,7 @@
         var toGroupId;
         var message;
         var ws;
-        var url = "ws://localhost:8088"+"${pageContext.request.contextPath}"+"/websocket";
+        var url = "ws://localhost:8088" + "${pageContext.request.contextPath}" + "/websocket";
         //页面加载时(在 DOM 结构绘制完成后)执行
         $(function () {
             //创建websocket连接
@@ -298,9 +298,9 @@
                     //清空消息框
                     $("#message_list").empty();
                     //加载好友消息
-                    var messageJsonArray = getMessageJsonArray(getMessageArrayItemKey(userId,toId));
+                    var messageJsonArray = getMessageJsonArray(getMessageArrayItemKey(userId, toId));
                     //历遍messageJsonArray
-                    for(var i=0;i<messageJsonArray.length;i++){
+                    for (var i = 0; i < messageJsonArray.length; i++) {
                         //添加到消息框
                         appendMessageToMessageList(messageJsonArray[i]);
                     }
@@ -368,7 +368,7 @@
                 var messageJsonObject = JSON.parse(messageJsonString);
                 appendMessageToMessageList(messageJsonObject);
                 //保存消息到本地
-                saveMessage(getMessageArrayItemKey(messageJsonObject.fromId,messageJsonObject.toId),messageJsonString);
+                saveMessage(getMessageArrayItemKey(messageJsonObject.fromId, messageJsonObject.toId), messageJsonString);
             }
         }
 
@@ -421,6 +421,7 @@
             $("#friendChat").css("display", "none");
             $("#groupChat").css("display", "");
         }
+
     </script>
 </head>
 <body>
@@ -445,7 +446,7 @@
                 </div>
                 <div id="menu_items">
                     <div class="menu_item">
-                        <a href="#">添加好友</a>
+                        <a href="${pageContext.request.contextPath}/user/toAddFriend">添加好友</a>
                     </div>
                     <hr/>
                     <div class="menu_item">
@@ -492,6 +493,7 @@
         <hr/>
         <div id="list">
             <div id="friendChat" style="height: 400px;width: 300px;overflow-x: hidden;overflow-y: auto">
+                <c:set var="friends" value="${user.friends}"></c:set>
                 <c:forEach items="${friends}" var="friend" varStatus="sta">
                     <div id="friend_${friend.id}" class="item">
                         <div>
@@ -507,8 +509,10 @@
                         <hr class="hr_style"/>
                     </c:if>
                 </c:forEach>
+
             </div>
             <div id="groupChat" style="display: none;height: 400px;width: 300px;overflow-x: hidden;overflow-y: auto">
+                <c:set var="groups" value="${user.groups}"></c:set>
                 <c:forEach items="${groups}" var="group" varStatus="sta">
                     <div class="item">
                         <div>
@@ -524,6 +528,7 @@
                         <hr class="hr_style"/>
                     </c:if>
                 </c:forEach>
+
             </div>
         </div>
     </div>
